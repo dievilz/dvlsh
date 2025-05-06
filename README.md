@@ -2,15 +2,21 @@
 
 ## 🧭 Core Philosophy
 
+  > [Grug](https://grugbrain.dev/) like Unix philosophy, Grug want to spread it so world be better place, Grug remain hopeful.
+
 * **POSIX-compliant**, Ksh-compatible shell
-* Written entirely in **Zig**, with modules designed to be cleanly testable and maintainable
+* Written entirely in **Zig ⚡️**, with modules designed to be cleanly testable and maintainable
 * Clear separation between core shell, plugins, CLI, configuration, and runtime state
+* Support for several config file formats, may end up just supporting one lol
+* Built-in plugin API so if a feature is wanted, it can be added quickly.
 * Emphasis on **interactive shell UX**: modern prompt, autosuggestions, syntax highlighting, and more
-* No fallback or automatic behaviors: user must opt-in explicitly to advanced features.
+* Always ready for customization. New prompt? Just type `:reload-prompt`... New session behavior? Just type `:reload-config`
+* Live session monitoring on demand. No more subshells for debugging/tracing
+* No fallback or automatic behaviors: user must opt-in explicitly to advanced features
 
 ---
 
-## 🧱 Architecture Summary (v1 + v3 combined)
+## 🧱 Architecture Draft
 
 ```plaintext
 src/
@@ -61,7 +67,6 @@ src/
 * Users do **not** need to write Zig for plugins — secondary language planned (TBD)
 * Plugins may override or extend default behavior
 * Features baked into shell but overridable:
-
   1. Prompt customization
   2. Syntax highlighting
   3. Autosuggestions
@@ -72,13 +77,13 @@ src/
 
 ## 💡 UX Innovations
 
-### Fixed Prompt Zone
+### Fixed Prompt Zone / Transient Prompt
 
 * Prompt is **always rendered at the bottom** of the terminal
-* Older prompts remain in scrollback with faded visuals
-* Prompt redraws cleanly (not reflows) on window resize
+* Older prompts remain in scrollback with different visuals
+* Prompt redraws cleanly (not reflows) on window resize* (May just leave it to Ghostty?)
 * Prompt zone and buffer zone are clearly separated
-* Feature must be **explicitly enabled** — no automatic fallback in tmux or multiplexers
+* Feature must be **explicitly enabled** — no automatic fallback in `tmux` or multiplexers
 
 ---
 
@@ -87,7 +92,6 @@ src/
 * `dvlsh` will expose internal shell state (env, config, vars, history, trace logs)
 * Users can inspect this **live** during a session or via external tools (e.g. Ghostty Inspector)
 * Mechanism:
-
   * UNIX domain socket-based stream (initial)
   * Optional: Plan 9-style virtual FS (e.g. `/tmp/dvlsh-inspect/config/PATH`)
   * Future: experimental 9P protocol interface
